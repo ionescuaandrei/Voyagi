@@ -31,7 +31,7 @@ This application leverages AI (Gemini API) to optimize travelers’ experiences 
 ## 🗂 Proposed React Native File Structure:
 
 ```
-TravelApp/
+Voyaige/
 ├── assets/
 │   ├── images/
 │   └── icons/
