@@ -1,4 +1,4 @@
-# 📱 Travel Planning App – Project Overview
+# 📱 Voyagi – Project Overview
 
 This application leverages AI (Gemini API) to optimize travelers’ experiences by providing intelligent recommendations for flights, accommodations, and detailed travel itineraries.
 
