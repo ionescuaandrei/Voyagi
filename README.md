@@ -31,42 +31,52 @@ This application leverages AI (Gemini API) to optimize travelers’ experiences 
 ## 🗂 Proposed React Native File Structure:
 
 ```
-Voyaige/
+TravelApp/
+├── app/
+│   ├── (auth)/
+│   │   ├── login.tsx
+│   │   ├── signup.tsx
+│   │   └── start.tsx
+│   ├── (tabs)/
+│   │   ├── _layout.tsx
+│   │   ├── index.tsx
+│   │   ├── profile.tsx
+│   │   ├── offers.tsx
+│   │   └── home.tsx
+│   ├── (stack)/
+│   │   ├── travel-planner.tsx
+│   │   ├── itinerary.tsx
+│   │   └── history.tsx
+│   ├── components/
+│   ├── _layout.tsx
+│   └── index.tsx
 ├── assets/
 │   ├── images/
 │   └── icons/
-├── components/
-│   ├── auth/
-│   ├── common/
-│   ├── itinerary/
-│   └── offers/
-├── screens/
-│   ├── AuthScreen.js
-│   ├── HomeScreen.js
-│   ├── TravelPlannerScreen.js
-│   ├── ProfileScreen.js
-│   ├── HistoryScreen.js
-│   └── OffersScreen.js
+├── constants/
+├── context/
 ├── navigation/
-│   ├── AppNavigator.js
-│   └── AuthNavigator.js
+│   ├── AppNavigator.tsx
+│   └── AuthNavigator.tsx
 ├── services/
-│   ├── FirebaseService.js
-│   ├── GeminiService.js
-│   └── TravelAPIService.js
-├── utils/
-│   └── helpers.js
+│   ├── FirebaseService.ts
+│   ├── GeminiService.ts
+│   └── TravelAPIService.ts
 ├── styles/
-│   ├── colors.js
-│   ├── fonts.js
-│   └── theme.js
-├── App.js
-└── index.js
+│   ├── colors.ts
+│   ├── fonts.ts
+│   └── theme.ts
+├── utils/
+│   └── helpers.ts
+├── app.json
+├── package.json
+├── tsconfig.json
+└── README.md
 ```
 
 ---
 
-## 🛠 Backend & AI Integrations:
+## 💠 Backend & AI Integrations:
 
 ### Backend (Firebase):
 - **Firestore Database** for user data, travel history, favorites, and caching hot deals.
@@ -74,7 +84,7 @@ Voyaige/
 - **Cloud Functions (optional)**: For complex server-side logic, caching API responses, etc.
 
 ### AI Integration (Gemini):
-- REST API calls handled via `GeminiService.js`.
+- REST API calls handled via `GeminiService.ts`.
 - Efficient request handling and caching to optimize performance.
 
 ---
@@ -101,10 +111,10 @@ Voyaige/
 
 ---
 
-## 🔖 App Architecture Diagram:
+## 📏 App Architecture Diagram:
 
 ```
-[Frontend React Native App]
+[Frontend React Native App (Tabs + Stacks)]
     │
     ├─ Firebase Authentication ── [User]
     │
@@ -117,7 +127,7 @@ Voyaige/
 
 ---
 
-## 📑 Feature Implementation Ideas:
+## 📁 Feature Implementation Ideas:
 
 ### AI-Powered Recommendations:
 1. **Collect user inputs:** duration, travelers, budget, destination preferences.
