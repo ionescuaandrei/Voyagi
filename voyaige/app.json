@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "voyaige",
+    "owner": "ionescuaandrei",
     "slug": "voyaige",
     "version": "1.0.0",
     "orientation": "portrait",
