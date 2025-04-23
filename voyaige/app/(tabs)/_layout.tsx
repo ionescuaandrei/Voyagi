@@ -24,7 +24,7 @@ const TabLayout = () => {
                     height: 60,
                 },
             }}>
-                <Tabs.Screen 
+                <Tabs.Screen
                     name="index" 
                     options={{ 
                         headerShown: false, 
