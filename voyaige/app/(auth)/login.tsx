@@ -1,81 +1,50 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Image, ActivityIndicator, Alert } from 'react-native';
-import * as Google from 'expo-auth-session/providers/google';
-import { auth } from '../../firebaseConfig';
-import { signInWithCredential, GoogleAuthProvider } from 'firebase/auth';
-import * as WebBrowser from 'expo-web-browser';
-import { router } from 'expo-router';
 import { COLORS } from '@/constants/theme';
 import { Ionicons } from '@expo/vector-icons';
-
-WebBrowser.maybeCompleteAuthSession();
+import { useRouter } from 'expo-router';
+import { useSSO, useAuth } from '@clerk/clerk-expo';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 export default function Login() {
+  const { startSSOFlow } = useSSO();
+  const { isSignedIn } = useAuth();
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  // Fixed the clientId formatting by removing trailing space
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    expoClientId: '595275012778-mggnc8so5cb72k99fafvmk714qm2anaf.apps.googleusercontent.com',
-    webClientId: '595275012778-mggnc8so5cb72k99fafvmk714qm2anaf.apps.googleusercontent.com',
-    androidClientId: '595275012778-mggnc8so5cb72k99fafvmk714qm2anaf.apps.googleusercontent.com',
-    iosClientId: '595275012778-mggnc8so5cb72k99fafvmk714qm2anaf.apps.googleusercontent.com',
-  });
-
-  useEffect(() => {
-    if (response?.type === 'success') {
-      setIsLoading(true);
-      
-      try {
-        // Improved token extraction with proper error handling
-        const { authentication } = response;
-        if (!authentication) {
-          throw new Error('Authentication data is missing');
-        }
-        
-        // Handle different token property names that Google might return
-        const idToken = authentication.idToken || authentication.id_token;
-        if (!idToken) {
-          throw new Error('ID token is missing from authentication response');
-        }
-        
-        const credential = GoogleAuthProvider.credential(idToken);
-        
-        signInWithCredential(auth, credential)
-          .then((userCredential) => {
-            // User successfully signed in
-            console.log("User signed in:", userCredential.user.displayName);
-            router.replace('/(tabs)'); // Navigate to your app's main screen
-          })
-          .catch((error) => {
-            console.error("Error signing in:", error);
-            Alert.alert("Login Failed", "There was an error signing in with Google. Please try again.");
-          })
-          .finally(() => {
-            setIsLoading(false);
-          });
-      } catch (error) {
-        console.error("Error processing authentication:", error);
-        Alert.alert("Authentication Error", "Failed to process authentication data. Please try again.");
-        setIsLoading(false);
-      }
-    }
-  }, [response]);
-
   const handleGoogleSignIn = async () => {
+    if (isSignedIn) {
+      router.replace('/(tabs)'); 
+      return;
+    }
+
+    if (isLoading) return;
+
     setIsLoading(true);
     try {
-      await promptAsync();
+      const { createdSessionId, setActive } = await startSSOFlow({ strategy: 'oauth_google' });
+      if (setActive && createdSessionId) {
+        // Set the active session correctly
+        await setActive({ session: createdSessionId });
+        router.replace('/(tabs)');
+      } else {
+        console.log("Google sign-in flow did not result in an active session.");
+      }
     } catch (error) {
-      console.error("Error during Google sign-in prompt:", error);
-      Alert.alert("Error", "Failed to open Google sign-in. Please try again.");
+      console.error('Error during Google sign-in:', error);
+      // Avoid showing generic alert for specific known issues like cancellation
+      if (!error.message?.includes('cancelled')) {
+         Alert.alert('Sign-in Error', 'An error occurred while signing in with Google. Please try again.');
+      }
+    } finally {
       setIsLoading(false);
     }
-  };
+  }
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.back()}
         >
@@ -83,10 +52,10 @@ export default function Login() {
         </TouchableOpacity>
         <Text style={styles.title}>Sign In</Text>
       </View>
-      
+
       <View style={styles.logoContainer}>
-        <Image 
-          source={require('@/assets/images/Untitled.png')} 
+        <Image
+          source={require('@/assets/images/Untitled.png')}
           style={styles.logo}
           resizeMode="contain"
         />
@@ -95,22 +64,20 @@ export default function Login() {
       </View>
 
       <View style={styles.buttonContainer}>
-        {isLoading ? (
-          <ActivityIndicator size="large" color={COLORS.primary} />
-        ) : (
           <TouchableOpacity
             style={styles.googleButton}
             onPress={handleGoogleSignIn}
-            disabled={!request}
+            disabled={isLoading}
           >
-            <Image 
-              source={{uri: 'https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg'}} 
-              style={styles.googleIcon}
-              resizeMode="contain"
-            />
-            <Text style={styles.googleButtonText}>Sign in with Google</Text>
+            {isLoading ? (
+              <ActivityIndicator size="small" color="#4285F4" style={styles.googleIcon} />
+            ) : (
+              <AntDesign name="google" size={20} style={styles.googleIcon} />
+            )}
+            <Text style={styles.googleButtonText}>
+              {isLoading ? 'Signing in...' : 'Sign in with Google'}
+            </Text>
           </TouchableOpacity>
-        )}
       </View>
 
       <View style={styles.footer}>
@@ -173,6 +140,7 @@ const styles = StyleSheet.create({
     marginTop: 50,
   },
   googleButton: {
+    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -190,6 +158,7 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
   },
   googleIcon: {
+    color: '#4285F4',
     width: 24,
     height: 24,
     marginRight: 10,
