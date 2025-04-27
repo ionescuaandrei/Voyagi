@@ -16,7 +16,7 @@ const InitialLayout = () => {
     if(!isAuthScreen && !isSignedIn){
       router.replace("/(auth)/start");
     }else if(isAuthScreen && isSignedIn){
-      router.replace("/(tabs)");
+      router.replace("/(tabs)/profile");
     }
   },[isLoaded,isSignedIn])
 

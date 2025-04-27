@@ -47,7 +47,6 @@ const TabLayout = () => {
                         tabBarLabel: "Profile",
                     }} 
                 />
-                
         </Tabs>
     )
 }
