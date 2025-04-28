@@ -3,6 +3,7 @@ import React from "react";
 import HotDestinations from "../../components/hotDestinations";
 import { COLORS } from "@/constants/theme";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { router } from "expo-router";
 
 const index = () => {
   return (
@@ -14,6 +15,9 @@ const index = () => {
       <View style={styles.bookingsContainer}>
         <TouchableOpacity
           style={styles.bookingsButton}
+          onPress={() => {
+            router.push("/create-trip/search-place");
+          }}
         >
           <Text style={styles.bookingsButtonText}>Book a Travel!</Text>
         </TouchableOpacity>
@@ -21,7 +25,7 @@ const index = () => {
       <View style={styles.hotDestinationsContainer}>
         <Text style={styles.hotDestinationsText}>✈️ Hot Destinations Flights</Text>
       </View>
-      <HotDestinations />
+      {/* <HotDestinations /> */}
       
     </View>
   );

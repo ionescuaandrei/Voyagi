@@ -13,5 +13,5 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-  ]
+, "app/_layout.jsx", "app/create-trip/search-place.tsx", "app/(tabs)/profile.jsx", "app/(tabs)/index.jsx", "app/create-trip/select-traveler.jsx"  ]
 }

@@ -16,7 +16,7 @@ const InitialLayout = () => {
     if(!isAuthScreen && !isSignedIn){
       router.replace("/(auth)/start");
     }else if(isAuthScreen && isSignedIn){
-      router.replace("/(tabs)/profile");
+      router.replace("/(tabs)");
     }
   },[isLoaded,isSignedIn])
 
@@ -25,9 +25,5 @@ const InitialLayout = () => {
   return <Stack screenOptions={{ headerShown: false }} />
   
 }
-
-
-
-
 export default InitialLayout
 

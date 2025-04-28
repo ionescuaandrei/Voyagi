@@ -5,9 +5,15 @@ import { COLORS } from "../constants/theme";
 import { ClerkProvider, ClerkLoaded } from "@clerk/clerk-expo";
 import { tokenCache } from '@clerk/clerk-expo/token-cache'
 import InitialLayout from "../components/initialLayout";
-import { ActivityIndicator, View } from "react-native"; // Import ActivityIndicator and View
+import { ActivityIndicator, View, Text } from "react-native"; // Added Text for error handling
+import 'react-native-get-random-values';
+
+// 1. Import your context provider
+import { CreateTripContext } from '../context/CreateTripContext'; // Adjust the path as needed
+import { useState } from "react";
 
 export default function RootLayout() {
+  const [tripData,setTripData] = useState([]);
   // useFonts returns a boolean indicating if fonts are loaded and an error object
   const [fontsLoaded, fontError] = useFonts({
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
@@ -24,40 +30,41 @@ export default function RootLayout() {
     "Poppins-LightItalic": require("../assets/fonts/Poppins-LightItalic.ttf"),
   });
 
-  const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
+  const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
   if (!publishableKey) {
     throw new Error("Missing EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY in .env");
   }
 
   // Show a loading indicator while fonts are loading
-  // You might want to show your app's splash screen here instead
   if (!fontsLoaded && !fontError) {
-    // Return a loading view or null
     return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: COLORS.background }}>
             <ActivityIndicator size="large" color={COLORS.primary} />
         </View>
     );
-    // Or return null if your splash screen is configured to stay visible
-    // return null;
   }
 
   // Optional: Handle font loading error
   if (fontError) {
       console.error("Font loading error:", fontError);
       // Render an error message or fallback UI
+      return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Text>Error loading fonts. Please restart the app.</Text>
+        </View>
+      );
   }
 
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
-      {/* Use ClerkLoaded to wait for Clerk initialization */}
       <ClerkLoaded>
-        <SafeAreaProvider>
+        <CreateTripContext.Provider value={{tripData,setTripData}}>
+          <SafeAreaProvider>
           <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.background }}>
-            {/* Render InitialLayout only when fonts are loaded and Clerk is ready */}
             <InitialLayout />
           </SafeAreaView>
-        </SafeAreaProvider>
+          </SafeAreaProvider>
+        </CreateTripContext.Provider>
       </ClerkLoaded>
     </ClerkProvider>
   );
